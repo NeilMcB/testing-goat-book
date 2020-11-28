@@ -45,9 +45,9 @@ def _get_or_create_dotenv():
 
 
 def _update_static_files():
-	run('./venv/bin/python manage.py collectstatic --noinput')
+	run('DJANGO_DEBUG=true ./venv/bin/python manage.py collectstatic --noinput')
 
 
 def _update_database():
-	run('./venv/bin/python manage.py migrate --noinput')
+	run('DJANGO_DEBUG=true ./venv/bin/python manage.py migrate --noinput')
  
