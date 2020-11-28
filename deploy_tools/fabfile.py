@@ -33,7 +33,7 @@ def _update_venv():
 	run('./venv/bin/pip install -r requirements.txt')
 
 
-def _create_or_update_dotenv():
+def _get_or_create_dotenv():
 	append('.env', f'SITENAME={env.host}')
 	
 	current_contents = run('cat .env')
