@@ -2,8 +2,8 @@ from django.http import HttpRequest
 from django.test import TestCase
 from django.urls import resolve
 
-from .views import homepage
-from .models import Item, List
+from lists.views import homepage
+from lists.models import Item, List
 
 class HomepageTest(TestCase):
 
