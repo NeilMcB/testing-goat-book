@@ -142,7 +142,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
 			delta=10,
 		)
 
-	@skip('Not yet implemented')
 	def test_cannot_add_empty_list_items(self):
 		# Alice accidentaly tries to submit an empty list item, she
 		# hits enter on an empty input box
