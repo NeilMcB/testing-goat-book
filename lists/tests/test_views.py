@@ -5,6 +5,7 @@ from django.urls import resolve
 
 from lists.views import homepage
 from lists.models import Item, List
+from lists.forms import ItemForm
 
 class HomepageTest(TestCase):
 
@@ -26,6 +27,10 @@ class HomepageTest(TestCase):
 	def test_only_saves_items_when_necessary(self):
 		response = self.client.get('/')
 		self.assertEqual(Item.objects.count(), 0)
+
+	def test_home_page_uses_item_form(self):
+		response = self.client.get('/')
+		self.assertIsInstance(response.context['form'], ItemForm)
 
 
 class ListViewTest(TestCase):
