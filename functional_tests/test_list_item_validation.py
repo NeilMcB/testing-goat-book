@@ -24,7 +24,7 @@ class ItemValidationTest(FunctionalTest):
 		self.wait_for_row_in_list_table('1: Buy milk')
 
 		# Perversely, she tries to submit an empty item again
-		self.browser.find_element_by_id('id_new_item').send_keys(Keys.Enter)
+		self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
 
 		# She recieves a similar error to before
 		self.wait_for(lambda: self.assertEqual(
