@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 from django.test import TestCase
 
@@ -58,9 +58,29 @@ class SendLoginEmailViewTest(TestCase):
 		self.assertEqual(message.tags, 'success')
 
 
+@patch('accounts.views.auth')
 class LoginViewTest(TestCase):
 
-	def test_redirects_to_homepage(self):
+	def test_redirects_to_homepage(self, mock_auth):
 		response = self.client.get('/accounts/login?token=abc123')
 		self.assertRedirects(response, '/')
+
+	def test_calls_authenticate_with_uid_from_get_request(self, mock_auth):
+		self.client.get('/accounts/login?token=abc123')
+		self.assertEqual(		
+			mock_auth.authenticate.call_args,
+			call(uid='abc123'),
+		)
+
+	def test_calls_auth_login_with_user_if_there_is_one(self, mock_auth):
+		response = self.client.get('/accounts/login?token=abc123')
+		self.assertEqual(
+			mock_auth.login.call_args,
+			call(response.wsgi_request, mock_auth.authenticate.return_value),
+		)
+
+	def test_does_not_login_if_user_is_not_authenticated(self, mock_auth):
+		mock_auth.authenticate.return_value = None
+		self.client.get('/accounts/login?token=abc123')
+		self.assertEqual(mock_auth.login.called, False)
 
