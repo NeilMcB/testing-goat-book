@@ -7,15 +7,17 @@ def _get_manage_dot_py(host):
 	return f'~/sites/{host}/venv/bin/python ~/sites/{host}/manage.py'
 
 
-def reset_database(host):
-	manage_dot_py = _get_manage_dot_py(host)
-	with settings(host_string=f'ubuntu@{host}', key_filename=os.environ['EC2_KEY_FILENAME']):
-		run(f'{manage_dot_py} flush --noinput')
-
-
 def _get_server_env_vars(host):
 	env_lines = run('cat ~/sites/{host}/.env').splitlines()
 	return dict(l.split('=') for l in env_lines if l)
+
+
+def reset_database(host):
+	manage_dot_py = _get_manage_dot_py(host)
+	with settings(host_string=f'ubuntu@{host}', key_filename=os.environ['EC2_KEY_FILENAME']):
+		env_vars = _get_server_env_vars(host)
+		with shell_env(**env_vars):
+			run(f'{manage_dot_py} flush --noinput')
 
 
 def create_session_on_server(host, email):
