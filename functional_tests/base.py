@@ -1,12 +1,14 @@
 import os
 import time
 
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 
-from .server_tools import reset_database
+from .management.commands.create_session import create_pre_authenticated_session
+from .server_tools import create_session_on_server, reset_database
 
 MAX_WAIT = 10
 
@@ -36,6 +38,20 @@ class FunctionalTest(StaticLiveServerTestCase):
 
 	def tearDown(self):
 		self.browser.quit()
+
+	def create_pre_authenticated_session(self, email):
+		if self.staging_server:
+			session_key = create_session_on_server(self.staging_server, email)
+		else:
+			session_key = create_pre_authenticated_session(email)
+		
+		# We need to visit the site to get a cookie
+		self.browser.get(f'{self.live_server_url}/404_made_up_url/')
+		self.browser.add_cookie(dict(
+			name=settings.SESSION_COOKIE_NAME,
+			value=session_key,
+			path='/',
+		))
 
 	@wait
 	def wait_for(self, fn):
